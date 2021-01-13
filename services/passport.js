@@ -25,13 +25,14 @@ passport.use(
       clientSecret: keys.googleClientSecret,
       callbackURL: '/auth/google/callback',
       proxy: true // without this heroku redirects you to an http url giving an error
-    }, (accessToken,refreshToken, profile, done) => {
-        User.findOne({googleId: profile.id}).then((user) => {
+    }, async (accessToken,refreshToken, profile, done) => {
+        const user = await User.findOne({googleId: profile.id})
             if (user){
                done(null, user)
             }else {
-                new User({googleId: profile.id}).save().then((user) => done(null, user))
+               const user = await new User({googleId: profile.id}).save();
+              done(null, user)
             }
-        })
+         
     })
  )
